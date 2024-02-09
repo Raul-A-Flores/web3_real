@@ -4,10 +4,15 @@ require("@nomicfoundation/hardhat-toolbox");
 module.exports = {
   solidity: "0.8.17",
   
-  defaultNetwork: "hardhat",
-  networks: {
+    networks: {
       hardhat: {
-          blockGasLimit: 60000000 // Network block gasLimit
+        gas: 6000000, // Adjust the gas limit as needed
+      }
+    },
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
       },
-  },
+    }
 };

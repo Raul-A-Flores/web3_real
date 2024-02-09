@@ -14,6 +14,7 @@ import Escrow from './abis/Escrow.json'
 import config from './config.json';
 
 function App() {
+
   const [provider, setProvider] =useState(null)
   const [account,setAccount] = useState(null)
   const [escrow, setEscrow] = useState(null)
@@ -27,35 +28,38 @@ function App() {
     const network = await provider.getNetwork()
     const realEstate = new ethers.Contract(config[network.chainId].realEstate.address, RealEstate, provider)
     const totalSupply = await realEstate.totalSupply()
-    console.log(provider) 
+    // console.log(provider) 
     const homes = []
+    console.log(account)
 
-      for (var i = 1; i <= totalSupply; i++){
+
+    for (var i = 1; i <= totalSupply; i++){
         const uri = await realEstate.tokenURI(i)
         const response = await fetch(uri)
         const metadata = await response.json()
         homes.push(metadata)
       }
       setHomes(homes)
-      console.log('homes', homes)
+      //console.log('homes', homes)
 
-      const escrow = new ethers.Contract(config[network.chainId].escrow.address, Escrow, provider)
-      setEscrow(escrow)
+    const escrow = new ethers.Contract(config[network.chainId].escrow.address, Escrow, provider)
+    setEscrow(escrow)
   
 
-      window.ethereum.on('accountChanged', async()=>{
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts'})
-        setAccount(accounts[0])
-        console.log(accounts)
+    window.ethereum.on('accountsChanged', async () => {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const account = ethers.utils.getAddress(accounts[0])
+      setAccount(account);
+      console.log(account)
     })
-    }
+  }
   
-
-
   useEffect(()=>{
     loadBlockchainData()
   }, [])
-
+  
+  
+  
   const togglePop = (home)=>{
     setHome(home)
     console.log(home)
